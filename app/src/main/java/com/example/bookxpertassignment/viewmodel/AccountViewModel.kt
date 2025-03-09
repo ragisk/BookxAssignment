@@ -13,6 +13,7 @@ import com.example.bookxpertassignment.AccountUtils
 import com.example.bookxpertassignment.model.Account
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AccountViewModel(private val context: Context) : ViewModel() {
 
@@ -67,7 +68,9 @@ class AccountViewModel(private val context: Context) : ViewModel() {
             if(AccountUtils.isInternetAvailable(context)) {
                 getAccountsFromApi()
             }else{
-              AccountUtils.showNoInternetDialog(context)
+                withContext(Dispatchers.Main) {
+                    AccountUtils.showNoInternetDialog(context)
+                }
             }
         }
         _isLoading.postValue(false)

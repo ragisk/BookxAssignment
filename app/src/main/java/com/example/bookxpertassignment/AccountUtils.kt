@@ -23,7 +23,7 @@ class AccountUtils {
                 .setCancelable(false)
                 .setPositiveButton(context.getString(R.string.go_to_setting)) { dialog, _ ->
                     dialog.dismiss()
-                    context.startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS))
+                    context.startActivity(Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS))
                 }.setNegativeButton(context.getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
                 }

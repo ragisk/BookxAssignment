@@ -15,5 +15,6 @@
     <string name="go_to_setting">Go to Settings</string>
     <string name="no_internet">No Internet Connection</string>
     <string name="internet_warn_message">Please turn on Mobile Data or Wi-Fi to continue.</string>
+    <string name="no_account_available">No Account Available\n</string>
 
 </resources>

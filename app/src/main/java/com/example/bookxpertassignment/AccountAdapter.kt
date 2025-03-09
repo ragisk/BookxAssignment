@@ -53,7 +53,7 @@ abstract class AccountAdapter(private var accountList: ArrayList<Account>, var c
         builder.setTitle(context.getString(R.string.delete_account))
         builder.setMessage(context.getString(R.string.delete_warning))
 
-        builder.setPositiveButton(context.getString(R.string.id)) { dialog, _ ->
+        builder.setPositiveButton(context.getString(R.string.yes)) { dialog, _ ->
             // Remove item from the list
             accountList.removeAt(position)
             delete(accountList[position])

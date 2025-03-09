@@ -14,6 +14,7 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
@@ -45,11 +46,12 @@ class MainActivity : ComponentActivity() {
     private lateinit var pdfIV: ImageView
     private lateinit var galleryIV: ImageView
     private lateinit var cameraIV: ImageView
+    private lateinit var noAccountAvailableTV: TextView
     private val REQUEST_CAMERA_PERMISSION = 100
     private val REQUEST_GALLERY_PERMISSION = 101
     private val REQUEST_IMAGE_CAPTURE = 1
     private val REQUEST_PICK_IMAGE = 2
-
+    var isAccountsAdded=false
     private var photoUri: Uri? = null
     private var photoFile: File? = null
 
@@ -64,6 +66,9 @@ class MainActivity : ComponentActivity() {
             progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         }
         accountViewModel.accounts.observe(this) { accountList ->
+            if (accountList.size==0){
+                noAccountAvailableTV.visibility=View.VISIBLE
+            }
             recyclerView.adapter = object :AccountAdapter(accountList, this){
                 override fun delete(account: Account) {
                     accountViewModel.delete(account)
@@ -72,13 +77,19 @@ class MainActivity : ComponentActivity() {
                 override fun update(account: Account) {
                     accountViewModel.update(account)
                 }
-
-
             }
+            isAccountsAdded=true
         }
 
         accountViewModel.getAllAccountsFromDB()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (AccountUtils.isInternetAvailable(this) && !isAccountsAdded) {
+            accountViewModel.getAllAccountsFromDB()
+        }
     }
 
     fun initViews(){
@@ -89,6 +100,7 @@ class MainActivity : ComponentActivity() {
         pdfIV = findViewById(R.id.pdfIV)
         galleryIV = findViewById(R.id.galleryIV)
         cameraIV = findViewById(R.id.cameraIV)
+        noAccountAvailableTV = findViewById(R.id.noAccountAvailableTV)
         pdfIV.setOnClickListener{
             openPdf()
         }
@@ -108,6 +120,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
     fun openPdf(){
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -118,7 +131,10 @@ class MainActivity : ComponentActivity() {
                             AccountUtils.PDF_URL, // Or pass applicationContext
                         )
                     }else{
-                        AccountUtils.showNoInternetDialog(this@MainActivity)
+                        withContext(Dispatchers.Main) {
+                            AccountUtils.showNoInternetDialog(this@MainActivity)
+                        }
+                        return@launch
                     }
                 }
                 withContext(Dispatchers.Main) {
